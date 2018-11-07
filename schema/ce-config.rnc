@@ -1,11 +1,9 @@
-default namespace = "http://www.w3.org/1999/xhtml"
 namespace c = "urn:cen.eu:en16931:cius-extension:2018"
 namespace html = "http://www.w3.org/1999/xhtml"
 
 start =
   # CIUS configuration
   element c:cius {
-    
     # Metadata
     element c:meta {
       # Short identifier
@@ -35,7 +33,10 @@ start =
       # Contact email for any questions and bug reports against CUIS/extension
       element c:contact { text },
       # Short description of CIUS/extensions
-      element c:abstract { attribute xml:lang { text }?, html-rtf },
+      element c:abstract {
+        attribute xml:lang { text }?,
+        html-rtf
+      },
       # Link for more information
       element c:link { xsd:anyURI }?
     },
@@ -48,40 +49,35 @@ start =
         # Unique ID for business rule (BR-{country}-{id} pattern is recommended)
         attribute id { text },
         description+,
-        restrictions?,        
+        restrictions?,
         implementation*
       }+
     }
   }
-
 description =
   # Human readable description can contain mix of text and HTML markup if formatting is needed
-  element c:description { attribute xml:lang { text }?, html-rtf }
-
+  element c:description {
+    attribute xml:lang { text }?,
+    html-rtf
+  }
 restrictions =
   # Restrictions that are further applied
-  element c:restrictions { (cardinality | technical | codelist | value | other | synonyms)+ }
-
-cardinality = 
+  element c:restrictions {
+    (cardinality | technical | codelist | value | other | synonyms)+
+  }
+cardinality =
   # Constaint on cardinality
   element c:cardinality {
     attribute maxOccurs { xsd:integer | "unbounded" }?,
     attribute minOccurs { xsd:integer }?,
     term+
   }
-
 technical =
   # Technical constaint
   element c:technical { empty }
-
 codelist =
   # Codelist
-  element c:codelist {
-    name?,
-    term+,
-    codelist-value+
-  }
-
+  element c:codelist { name?, listURI?, listVersion?, term+, codelist-value+ }
 value =
   # Restricted value domain
   # Restriction can be made using attributes similar to W3C XML Schema facets
@@ -102,45 +98,43 @@ value =
     attribute maxInclusive { xsd:decimal }?,
     term+
   }
-  
 other =
   # FIXME: what should be content model here
-  element c:other {
-    term+
-  }  
-  
-name = 
+  element c:other { term+ }
+name =
   # Name 
   element c:name { text }
-
 codelist-value =
   # Allowed value
-  element c:value { text }
-
+  element c:value { text } 
 term =
   # Reference to business term (i.e. BT-NN)
   element c:term { text }
-
+  
+listURI = 
+  # Reference to original codelist
+  element c:listURI { text }
+  # Version of codelist
+listVersion =
+  element c:listVersion { text }
+  
 synonyms =
   # Synonyms of term
   element c:synonyms { term+, synonym+ }
-  
 synonym =
   # Synonym of term
-  element c:synonym { attribute xml:lang { text }?, text }
-
-
+  element c:synonym {
+    attribute xml:lang { text }?,
+    text
+  }
 html-rtf = text & any-html*
-
 any-html = element html:* { any-attribute*, (any-html* & text) }
 any-attribute = attribute * { text }
-
 implementation =
   # Technical implementation of constraint in any schema language, usually in Schematron
   element c:implementation {
     # To which syntax implementation applies?
-    attribute syntax { "UBL" | "CII" }, 
-    any 
+    attribute syntax { "UBL" | "CII" },
+    any
   }
-
 any = element * { any-attribute*, (any* & text) }
